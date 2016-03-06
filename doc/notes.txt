@@ -1,0 +1,139 @@
+***** setup dev env & project template
+0. update brew and npm
+  $ brew update
+  $ brew install node
+  $ node -v
+  $ npm install npm -g
+  $ npm install -g yo
+  $ npm install -g generator-angular
+  $ npm install -g bower
+
+1. setup angular
+  $ mkdir -p <project>/client
+  $ cd <project>/client
+  $ yo angular //create an AngualarJS application skeleton
+    choose: Grunt, no Sass, yes Bootstrap, default for the rest
+  $ npm install -g grunt-cli
+  $ npm install
+  $ bower install
+  $ npm install --save --dev karma
+  $ grunt serve
+  http://localhost:9000
+
+
+2. setup Play
+  $ brew install typesafe-activator
+  $ cd <project>
+  $ activator new server play-java
+  $ cd server
+  $ activator run //for more port configuration http://stackoverflow.com/questions/8205067/how-do-i-change-the-default-port-9000-that-play-uses-when-i-execute-the-run
+
+
+3. IDE
+3.1 import server to IntelliJ
+  start IntelliJ, import project, find build.sbt
+3.2 import Angular into IntelliJ as a module
+  File -> New -> Module From Existing Sources... -> choose "client" folder
+  -> create module from existing sources
+
+
+4. connect Angular to Play by using Grunt proxy
+  $ cd client
+  $ npm install grunt-connect-proxy --save-dev
+  make changes to Gruntfile.js
+    1. add "proxies" value to "connect" task
+    2. add grunt-connect-proxy middleware in "livereload" task
+    3. register "configureProxies:server" to the "serve" task
+    4. load npm module: grunt.loadNpmTasks('grunt-connect-proxy');
+
+
+5. coding the client
+5.1 generate sign up form
+yo angular:controller signup
+yo angular:view signup
+5.2 configure client '/signup' routing in /client/app/scripts/app.js
+  http://localhost:8080/#/signup
+5.3 coding views
+  /client/app/index.html
+  /client/app/views/signup.html
+5.4 coding controllers
+  /client/app/scripts/controllers/signup.js
+5.5 client wireup is complete
+  http://localhost:8080/#/signup
+
+6. coding the backend
+6.1 coding signup controller
+  /server/app/controllers/Application.java
+6.2 add routing
+  /server/conf/routes
+6.3 use postman to test post service
+  screenshot2.png
+6.4 test front/backend together
+  http://localhost:8080/#/signup
+  screenshot3.png
+
+Request/Response flow:
+-> look into /client/app/scrpts/app.js route file, get "clientApp", which use /app/index.html as template,
+-> render /views/signup.html as part of /app/index.html
+-> click "Sign up"
+-> call signup() function of "clientApp" in signup.js
+-> send post request to "/app/signup" service by using $http middleware
+-> open chrome -> developer tool -> Network -> see "Action not found" error (see screenshot1.png)
+
+***** Add ebean ORM
+http://stackoverflow.com/questions/35712085/cannot-import-com-avaje-ebean-model-for-playframework
+7. config ebean ORM
+7.1 add the Play Ebean plugin to your SBT plugins in project/plugins.sbt:
+      addSbtPlugin("com.typesafe.sbt" % "sbt-play-ebean" % "1.0.0")
+7.2 modify your build.sbt to enable the Play Ebean plugin:
+  lazy val myProject = (project in file(".")).enablePlugins(PlayJava, PlayEbean)
+7.3 Specify where your models live in the application.conf:
+  ebean.default = ["models.*"]
+7.4 Specify DB connection in application.conf
+  db.default.driver=org.h2.Driver
+  db.default.url="jdbc:h2:mem:play"
+  db.default.username=sa
+  db.default.password=""
+7.5 Update and download all needed dependencies including Ebean dependencies!
+  $activator clean
+  $activator
+    h2-browser to see the in memory H2 DB
+
+8. define models
+8.1 /server/app/models/User.java & BlogPost.java & PostComment.java
+
+
+***** Coding
+9. code server controller
+  /server/app/controllers/Application.java //for demo purpose, don't use it in production
+
+10. code angular service to handle server error
+  $ yo angular:service alerts
+  /client/app/scripts/services/alerts.js
+
+  $ yo angular:controller alerts
+  /client/app/scripts/controller/alerts.js
+
+  $ bower install angular-bootstrap --save
+
+  inject 'ui.bootstrap' to app.js
+
+  add 'alert directive' to index.html
+
+  code signup.js to add error handling
+
+11. code UI for signup success message
+  $ yo angular:view dashboard
+  $ yo angular:controller dashboard
+  modify "signup.js" with '.success'
+
+
+12. create userService to get user login status
+  $ yo angular:service user
+
+
+***** Reference
+https://github.com/jamesward/play-rest-security
+https://www.toptal.com/java/building-modern-web-applications-with-angularjs-and-play-framework
+http://securesocial.ws/
+http://www.thebuzzmedia.com/designing-a-secure-rest-api-without-oauth-authentication/
