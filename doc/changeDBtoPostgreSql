@@ -1,0 +1,22 @@
+1.1 Local installation
+    download and install Postgres.app
+    or
+    https://ricochen.wordpress.com/2012/07/20/install-postgres-on-mac-os-x-lion-with-homebrew-howto/
+    $ brew install postgres
+    $ initdb /usr/local/var/postgres
+
+or
+1.2 setup an account in https://www.elephantsql.com/
+    create a db and get connection url
+
+2. add mysql plugin to build.sbt
+    libraryDependencies ++= Seq(
+        "postgresql" % "postgresql" % "9.1-901-1.jdbc4"
+    )
+
+3. add db configuration to /conf/application.conf
+
+
+4. rebuild the application
+  $ activator clean compile
+  $ activator run

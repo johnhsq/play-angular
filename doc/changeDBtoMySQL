@@ -1,0 +1,28 @@
+http://blog.joefallon.net/2013/10/install-mysql-on-mac-osx-using-homebrew/
+
+1. install mysql
+  brew update
+  brew doctor
+  brew upgrade
+  brew install mysql
+  mysql.server restart
+  mysql.server status
+
+2. add mysql plugin to build.sbt
+    libraryDependencies ++= Seq(
+      "mysql" % "mysql-connector-java" % "5.1.34"
+    )
+
+3. add db configuration to /conf/application.conf
+    db.default.driver=com.mysql.jdbc.Driver
+    db.default.url="jdbc:mysql://localhost/playangular"
+    db.default.username=root
+    db.default.password=""
+
+    ebean.default=["models.*"]
+    play.evolutions.db.default.autoApply=true
+
+4. rebuild the application
+  $ activator clean
+  $ activator compile
+  $ activator run

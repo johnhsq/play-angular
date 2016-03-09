@@ -4,7 +4,7 @@
 # --- !Ups
 
 create table blog_post (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   subject                   varchar(255) not null,
   content                   TEXT,
   user_id                   bigint,
@@ -13,7 +13,7 @@ create table blog_post (
 ;
 
 create table post_comment (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   blog_post_id              bigint,
   user_id                   bigint,
   content                   TEXT,
@@ -21,18 +21,12 @@ create table post_comment (
 ;
 
 create table user (
-  id                        bigint not null,
+  id                        bigint auto_increment not null,
   email                     varchar(255) not null,
   sha_password              varbinary(64) not null,
   constraint uq_user_email unique (email),
   constraint pk_user primary key (id))
 ;
-
-create sequence blog_post_seq;
-
-create sequence post_comment_seq;
-
-create sequence user_seq;
 
 alter table blog_post add constraint fk_blog_post_user_1 foreign key (user_id) references user (id) on delete restrict on update restrict;
 create index ix_blog_post_user_1 on blog_post (user_id);
@@ -45,19 +39,13 @@ create index ix_post_comment_user_3 on post_comment (user_id);
 
 # --- !Downs
 
-SET REFERENTIAL_INTEGRITY FALSE;
+SET FOREIGN_KEY_CHECKS=0;
 
-drop table if exists blog_post;
+drop table blog_post;
 
-drop table if exists post_comment;
+drop table post_comment;
 
-drop table if exists user;
+drop table user;
 
-SET REFERENTIAL_INTEGRITY TRUE;
-
-drop sequence if exists blog_post_seq;
-
-drop sequence if exists post_comment_seq;
-
-drop sequence if exists user_seq;
+SET FOREIGN_KEY_CHECKS=1;
 

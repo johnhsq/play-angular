@@ -131,6 +131,13 @@ http://stackoverflow.com/questions/35712085/cannot-import-com-avaje-ebean-model-
 12. create userService to get user login status
   $ yo angular:service user
 
+***** Start application
+13. start server
+  $ cd server
+  $ activator run
+14. start client
+  $ cd client
+  $ grunt serve
 
 ***** Reference
 https://github.com/jamesward/play-rest-security
